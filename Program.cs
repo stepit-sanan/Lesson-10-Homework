@@ -1,67 +1,36 @@
-﻿class Program
-{
-    static void Main(string[] args)
-    {
-        try
-        {
-            PersonService personService = new PersonService();
-            personService.Add(new Person()
-            {
-                ID = 1,
-                Fullname = "Sanan Gambarov",
-                Age = 18
-            });
-            Console.WriteLine("Complete");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-}
+﻿using Lesson_10___Homework.Models;
+using Lesson_10___Homework.Service;
 
-class PersonDB
-{
-    public List<Person> Persons = new List<Person>();
-}
+StudentService studentService = new();
 
-class Person
-{
-    public int ID { get; set; }
-    public string Fullname { get; set; }
-    public int Age { get; set; }
-}
+Student std3 = new() { ID = 3, Name = "Sanan 3", Surname = "Gambarov 3", Age = 20 };
+Student std1 = new() { ID = 1, Name = "Sanan 1", Surname = "Gambarov 1", Age = 10 };
+Student std2 = new() { ID = 2, Name = "Sanan 2", Surname = "Gambarov 2", Age = 15 };
+Student std6 = new() { ID = 3, Name = "Sanan 6", Surname = "Gambarov 6", Age = 35 };
+Student std4 = new() { ID = 3, Name = "Sanan 4", Surname = "Gambarov 4", Age = 25 };
+Student std5 = new() { ID = 3, Name = "Sanan 5", Surname = "Gambarov 5", Age = 30 };
 
-class PersonService
-{
-    private readonly PersonDB? personDb = null;
-    private delegate bool PersonChecker(Person p);
-    private PersonChecker? personChecker = null;
+//Teleberlin database-e elave olunmasi
+studentService.AddAll(std3, std1, std2, std6, std4, std5);
+Console.WriteLine("Students created and added");
+Thread.Sleep(500);
 
-    public PersonService()
-    {
-        personDb = new PersonDB();
+//Print All
+Console.WriteLine("\nAll Students (Fullnames)");
+studentService.PrintAllFullnames();
+Thread.Sleep(500);
 
-        personChecker = isAgeAcceptable;
-        personChecker += isFullnameLengthAcceptable;
-        personChecker += isIDAcceptable;
-    }
+//18 den yuxari olanlari cixardir
+Console.WriteLine("\nStudents age older than 18");
+studentService.GetStudentsOlderThan18().ForEach(x => Console.WriteLine(x.Fullname()));
+Thread.Sleep(500);
 
-    public void Add(Person person)
-    {
-        bool result;
-        foreach (PersonChecker func in personChecker.GetInvocationList())
-        {
-            result = func.Invoke(person);
-            if (result) throw new Exception("Wrong");
-        }
+//Butun telebeler
+Console.WriteLine("\nAll Students Infos");
+studentService.PrintAllStudents();
+Thread.Sleep(500);
 
-        personDb.Persons.Add(person);
-    }
-
-    private bool isIDAcceptable(Person p) => p.ID <= 0;
-    private bool isAgeAcceptable(Person p) => p.Age < 18;
-    private bool isFullnameLengthAcceptable(Person p) => p.Fullname.Length > 20;
-}
-
-
+//Yasa gore siralama
+Console.WriteLine("\nSort by Age");
+studentService.SortByAge().ForEach(x => Console.WriteLine(x.Fullname()));
+Thread.Sleep(500);
